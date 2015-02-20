@@ -1,0 +1,5 @@
+- Download pypy3 at http://pypy.org/download.html
+- Put the pypy interpreter in your PATH
+- Get pip https://bootstrap.pypa.io/get-pip.py
+- pypy3 get-pip.py
+- pip install tornado

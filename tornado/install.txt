@@ -1,0 +1,13 @@
+virtualenv env
+source env/bin/activate
+pip install flask
+pip install uwsgi
+
+----
+With pypy
+
+Download pypy3 at http://pypy.org/download.html
+Put the pypy interpreter in your PATH
+Download https://bootstrap.pypa.io/get-pip.py
+pypy3 get-pip.py
+pip install tornado
