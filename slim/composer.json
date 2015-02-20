@@ -1,0 +1,12 @@
+{
+  "require": {
+    "slim/slim": "*"
+  },
+  "require-dev": {
+  },
+  "autoload": {
+    "psr-4": {
+      "": "\\Cosy"
+    }
+  }
+}

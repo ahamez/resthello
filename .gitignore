@@ -2,3 +2,8 @@ __pycache__
 env/
 a.out
 .DS_Store
+
+slim/composer.phar
+slim/composer.lock
+slim/vendor
+
