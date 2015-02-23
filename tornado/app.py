@@ -58,6 +58,7 @@ class Motor(tornado.web.RequestHandler):
         yield db.results.update({'_id': 'cosyverif'}, {'key': 'value'})
         locale = yield db.locales.find_one({'_id': 'en'})
         self.write('foo' + str(user) + str(projet) + str(locale))
+        self.finish()
 
 
 def main():
