@@ -8,11 +8,12 @@ import tornado.options
 import tornado.gen
 
 from tornado.options import define, options
+
 define("port", default=8080, help="run on the given port", type=int)
+define("debug", default=False, help="debug mode", type=bool)
 
 
 class PyMongo(tornado.web.RequestHandler):
-
     # @tornado.gen.coroutine
     def get(self):
         db = self.settings['pymongo_db']
@@ -26,7 +27,6 @@ class PyMongo(tornado.web.RequestHandler):
 
 
 class Motor(tornado.web.RequestHandler):
-
     @tornado.gen.coroutine
     def get(self):
         db = self.settings['motor_db']
@@ -38,8 +38,8 @@ class Motor(tornado.web.RequestHandler):
         self.write(str(user) + str(projet) + str(locale))
         self.finish()
 
-class Motor2(tornado.web.RequestHandler):
 
+class Motor2(tornado.web.RequestHandler):
     @tornado.gen.coroutine
     def get(self):
         db = self.settings['motor_db']
@@ -48,7 +48,8 @@ class Motor2(tornado.web.RequestHandler):
         project_future = db.projects.find_one({'_id': 'cosyverif'})
         results_update_future = db.results.update({'_id': 'cosyverif'}, {'key': 'value'})
         locale_future = db.locales.find_one({'_id': 'en'})
-        user, _, project, _, locale = yield [user_future, billings_update_future, project_future, results_update_future, locale_future]
+        user, _, project, _, locale = yield [user_future, billings_update_future, project_future, results_update_future,
+                                             locale_future]
         self.write(str(user) + str(project) + str(locale))
         self.finish()
 
@@ -57,21 +58,27 @@ class Root(tornado.web.RequestHandler):
     def get(self):
         self.write('Hello world')
 
+
 def main():
+
     tornado.options.parse_command_line()
+
+    if options.debug:
+        print("Debug mode")
 
     motor_db = motor.MotorClient().paquito
     pymongo_db = pymongo.MongoClient().paquito
 
-    application = tornado.web.Application([(r"/",Root),
+    application = tornado.web.Application([(r"/", Root),
                                            (r"/pymongo", PyMongo),
                                            (r"/motor", Motor),
                                            (r"/motor2", Motor2)
-                                           ], motor_db=motor_db, pymongo_db=pymongo_db, debug=False
+                                          ], motor_db=motor_db, pymongo_db=pymongo_db, debug=options.debug
     )
 
     application.listen(options.port)
     tornado.ioloop.IOLoop.instance().start()
+
 
 if __name__ == '__main__':
     main()
