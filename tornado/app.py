@@ -6,11 +6,12 @@ import tornado.ioloop
 import tornado.web
 import tornado.options
 import tornado.gen
-import tornado.httpclient
 import motor
 
 import mongoengine
 
+from tornado.options import define, options
+define("port", default=8080, help="run on the given port", type=int)
 
 class Foo(mongoengine.Document):
     field1 = mongoengine.StringField(required=True)

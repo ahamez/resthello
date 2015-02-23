@@ -7,3 +7,4 @@ slim/composer.phar
 slim/composer.lock
 slim/vendor
 
+*/.idea
