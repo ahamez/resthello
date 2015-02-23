@@ -69,7 +69,6 @@ def main():
 
     pool = concurrent.futures.ThreadPoolExecutor(max_workers=5)
     db = motor.MotorClient().paquito
-    users = db['users']
 
     mongoengine.connect('localhost')
 
@@ -77,12 +76,11 @@ def main():
                                            (r"/simple", Simple),
                                            (r"/pool", Pool),
                                            (r"/motor", Motor)
-                                           ], db=db, users=users, pool=pool, debug=True
+                                           ], db=db, pool=pool, debug=False
     )
 
-    application.listen(8080)
+    application.listen(options.port)
     tornado.ioloop.IOLoop.instance().start()
-
 
 if __name__ == '__main__':
     main()
