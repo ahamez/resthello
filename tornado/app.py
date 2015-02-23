@@ -38,6 +38,21 @@ class Motor(tornado.web.RequestHandler):
         self.write(str(user) + str(projet) + str(locale))
         self.finish()
 
+class Motor2(tornado.web.RequestHandler):
+
+    @tornado.gen.coroutine
+    def get(self):
+        db = self.settings['motor_db']
+        user_future = db.users.find_one({'_id': 'saucisson'})
+        billings_update_future = db.billings.update({'_id': 'saucisson'}, {'key': 'value'})
+        project_future = db.projects.find_one({'_id': 'cosyverif'})
+        results_update_future = db.results.update({'_id': 'cosyverif'}, {'key': 'value'})
+        locale_future = db.locales.find_one({'_id': 'en'})
+        user, _, project, _, locale = yield [user_future, billings_update_future, project_future, results_update_future, locale_future]
+        self.write(str(user) + str(project) + str(locale))
+        self.finish()
+
+
 class Root(tornado.web.RequestHandler):
     def get(self):
         self.write('Hello world')
@@ -50,8 +65,9 @@ def main():
 
     application = tornado.web.Application([(r"/",Root),
                                            (r"/pymongo", PyMongo),
-                                           (r"/motor", Motor)
-                                           ], motor_db=motor_db, pymongo_db=pymongo_db, debug=True
+                                           (r"/motor", Motor),
+                                           (r"/motor2", Motor2)
+                                           ], motor_db=motor_db, pymongo_db=pymongo_db, debug=False
     )
 
     application.listen(options.port)
