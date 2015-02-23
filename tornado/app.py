@@ -22,7 +22,7 @@ class PyMongo(tornado.web.RequestHandler):
         db.results.update({'_id': 'cosyverif'}, {'key': 'value'})
         locale = db.locales.find_one({'_id': 'en'})
         self.write(str(user) + str(projet) + str(locale))
-
+        self.finish()
 
 
 class Motor(tornado.web.RequestHandler):
