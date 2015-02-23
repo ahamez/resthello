@@ -60,6 +60,9 @@ class Motor(tornado.web.RequestHandler):
         self.write('foo' + str(user) + str(projet) + str(locale))
         self.finish()
 
+class Root(tornado.web.RequestHandler):
+    def get(self):
+        self.write('Hello world')
 
 def main():
     tornado.options.parse_command_line()
@@ -70,7 +73,8 @@ def main():
 
     mongoengine.connect('localhost')
 
-    application = tornado.web.Application([(r"/simple", Simple),
+    application = tornado.web.Application([(r"/",Root),
+                                           (r"/simple", Simple),
                                            (r"/pool", Pool),
                                            (r"/motor", Motor)
                                            ], db=db, users=users, pool=pool, debug=True
