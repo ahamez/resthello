@@ -92,6 +92,17 @@ class Random3(tornado.web.RequestHandler):
         self.finish()
 
 
+class Random4(tornado.web.RequestHandler):
+    @tornado.gen.coroutine
+    def get(self):
+        t1 = random.randint(10, 100) / 1000
+        t2 = random.randint(10, 100) / 1000
+        yield tornado.gen.sleep(t1)
+        yield tornado.gen.sleep(t2)
+        self.write("Slept " + str(t1*1000) + " ms, then " + str(t2*1000))
+        self.finish()
+
+
 class Root(tornado.web.RequestHandler):
     def get(self):
         self.write('Hello world')
@@ -115,7 +126,8 @@ def main():
                                            (r"/motor2", Motor2),
                                            (r"/rand1", Random1),
                                            (r"/rand2", Random2),
-                                           (r"/rand3", Random3)
+                                           (r"/rand3", Random3),
+                                           (r"/rand4", Random4)
                                            ], motor_db=motor_db, pymongo_db=pymongo_db, debug=options.debug
     )
 
