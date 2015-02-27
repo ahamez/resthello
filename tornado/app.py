@@ -2,6 +2,8 @@
 
 import motor
 import pymongo
+import random
+import time
 import tornado.ioloop
 import tornado.web
 import tornado.options
@@ -53,6 +55,41 @@ class Motor2(tornado.web.RequestHandler):
         self.write(str(user) + str(project) + str(locale))
         self.finish()
 
+class Random1(tornado.web.RequestHandler):
+    @tornado.gen.coroutine
+    def get(self):
+        t = yield tornado.gen.Task(random_sleep1)
+        self.write("Slept " + str(t) + " ms")
+        self.finish()
+
+def random_sleep1(callback):
+    t = random.randint(10, 100) / 1000
+    time.sleep(t)
+    callback(t * 1000)
+
+
+class Random2(tornado.web.RequestHandler):
+    @tornado.gen.coroutine
+    def get(self):
+        t = yield random_sleep2()
+        self.write("Slept " + str(t) + " ms")
+        self.finish()
+
+@tornado.gen.coroutine
+def random_sleep2():
+    t = random.randint(10, 100) / 1000
+    time.sleep(t)
+    return t * 1000
+
+
+class Random3(tornado.web.RequestHandler):
+    @tornado.gen.coroutine
+    def get(self):
+        t = random.randint(10, 100) / 1000
+        yield tornado.gen.sleep(t)
+        self.write("Slept " + str(t*1000) + " ms")
+        self.finish()
+
 
 class Root(tornado.web.RequestHandler):
     def get(self):
@@ -62,9 +99,11 @@ class Root(tornado.web.RequestHandler):
 def main():
 
     tornado.options.parse_command_line()
+    random.seed()
 
     if options.debug:
         print("Debug mode")
+    print("Port", options.port)
 
     motor_db = motor.MotorClient().paquito
     pymongo_db = pymongo.MongoClient().paquito
@@ -72,8 +111,11 @@ def main():
     application = tornado.web.Application([(r"/", Root),
                                            (r"/pymongo", PyMongo),
                                            (r"/motor", Motor),
-                                           (r"/motor2", Motor2)
-                                          ], motor_db=motor_db, pymongo_db=pymongo_db, debug=options.debug
+                                           (r"/motor2", Motor2),
+                                           (r"/rand1", Random1),
+                                           (r"/rand2", Random2),
+                                           (r"/rand3", Random3)
+                                           ], motor_db=motor_db, pymongo_db=pymongo_db, debug=options.debug
     )
 
     application.listen(options.port)
