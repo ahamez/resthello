@@ -13,6 +13,7 @@ from tornado.options import define, options
 
 define("port", default=8080, help="run on the given port", type=int)
 define("debug", default=False, help="debug mode", type=bool)
+define("mongo", default='127.0.0.1', help="MongoDB host", type=str)
 
 
 class PyMongo(tornado.web.RequestHandler):
@@ -105,8 +106,8 @@ def main():
         print("Debug mode")
     print("Port", options.port)
 
-    motor_db = motor.MotorClient().paquito
-    pymongo_db = pymongo.MongoClient().paquito
+    motor_db = motor.MotorClient(options.mongo).paquito
+    pymongo_db = pymongo.MongoClient(options.mongo).paquito
 
     application = tornado.web.Application([(r"/", Root),
                                            (r"/pymongo", PyMongo),
