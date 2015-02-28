@@ -56,39 +56,13 @@ class Motor2(tornado.web.RequestHandler):
         self.write(str(user) + str(project) + str(locale))
         self.finish()
 
-class Random1(tornado.web.RequestHandler):
-    @tornado.gen.coroutine
-    def get(self):
-        t = yield tornado.gen.Task(random_sleep1)
-        self.write("Slept " + str(t) + " ms")
-        self.finish()
-
-def random_sleep1(callback):
-    t = random.randint(10, 100) / 1000
-    time.sleep(t)
-    callback(t * 1000)
-
-
-class Random2(tornado.web.RequestHandler):
-    @tornado.gen.coroutine
-    def get(self):
-        t = yield random_sleep2()
-        self.write("Slept " + str(t) + " ms")
-        self.finish()
-
-@tornado.gen.coroutine
-def random_sleep2():
-    t = random.randint(10, 100) / 1000
-    time.sleep(t)
-    return t * 1000
-
 
 class Random3(tornado.web.RequestHandler):
     @tornado.gen.coroutine
     def get(self):
         t = random.randint(10, 100) / 1000
         yield tornado.gen.sleep(t)
-        self.write("Slept " + str(t*1000) + " ms")
+        self.write("Slept " + str(t * 1000) + " ms")
         self.finish()
 
 
@@ -99,8 +73,9 @@ class Random4(tornado.web.RequestHandler):
         t2 = random.randint(10, 100) / 1000
         yield tornado.gen.sleep(t1)
         yield tornado.gen.sleep(t2)
-        self.write("Slept " + str(t1*1000) + " ms, then " + str(t2*1000))
+        self.write("Slept " + str(t1 * 1000) + " ms, then " + str(t2 * 1000))
         self.finish()
+
 
 class Random5(tornado.web.RequestHandler):
     @tornado.gen.coroutine
@@ -109,9 +84,10 @@ class Random5(tornado.web.RequestHandler):
         for i in range(random.randint(2, 4)):
             t = random.randint(10, 100) / 1000
             yield tornado.gen.sleep(t)
-            res += str(t*1000) + "ms, "
+            res += str(t * 1000) + "ms, "
         self.write(res)
         self.finish()
+
 
 class Root(tornado.web.RequestHandler):
     def get(self):
@@ -119,7 +95,6 @@ class Root(tornado.web.RequestHandler):
 
 
 def main():
-
     tornado.options.parse_command_line()
     random.seed()
 
@@ -134,13 +109,11 @@ def main():
                                            (r"/pymongo", PyMongo),
                                            (r"/motor", Motor),
                                            (r"/motor2", Motor2),
-                                           (r"/rand1", Random1),
-                                           (r"/rand2", Random2),
                                            (r"/rand3", Random3),
                                            (r"/rand4", Random4),
                                            (r"/rand5", Random5)
                                            ], motor_db=motor_db, pymongo_db=pymongo_db, debug=options.debug
-    )
+                                          )
 
     application.listen(options.port)
     tornado.ioloop.IOLoop.instance().start()
