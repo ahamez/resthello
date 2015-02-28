@@ -102,6 +102,16 @@ class Random4(tornado.web.RequestHandler):
         self.write("Slept " + str(t1*1000) + " ms, then " + str(t2*1000))
         self.finish()
 
+class Random5(tornado.web.RequestHandler):
+    @tornado.gen.coroutine
+    def get(self):
+        res = "Slept: "
+        for i in range(random.randint(2, 4)):
+            t = random.randint(10, 100) / 1000
+            yield tornado.gen.sleep(t)
+            res += str(t*1000) + "ms, "
+        self.write(res)
+        self.finish()
 
 class Root(tornado.web.RequestHandler):
     def get(self):
@@ -127,7 +137,8 @@ def main():
                                            (r"/rand1", Random1),
                                            (r"/rand2", Random2),
                                            (r"/rand3", Random3),
-                                           (r"/rand4", Random4)
+                                           (r"/rand4", Random4),
+                                           (r"/rand5", Random5)
                                            ], motor_db=motor_db, pymongo_db=pymongo_db, debug=options.debug
     )
 
