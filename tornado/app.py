@@ -29,6 +29,15 @@ class PyMongo(tornado.web.RequestHandler):
         self.finish()
 
 
+class PyMongoOne(tornado.web.RequestHandler):
+    # @tornado.gen.coroutine
+    def get(self):
+        db = self.settings['pymongo_db']
+        user = db.users.find_one({'_id': 'saucisson'})
+        self.write(str(user))
+        self.finish()
+
+
 class Motor(tornado.web.RequestHandler):
     @tornado.gen.coroutine
     def get(self):
@@ -56,6 +65,13 @@ class Motor2(tornado.web.RequestHandler):
         self.write(str(user) + str(project) + str(locale))
         self.finish()
 
+class MotorOne(tornado.web.RequestHandler):
+    @tornado.gen.coroutine
+    def get(self):
+        db = self.settings['motor_db']
+        user = yield db.users.find_one({'_id': 'saucisson'})
+        self.write(str(user))
+        self.finish()
 
 class Random3(tornado.web.RequestHandler):
     @tornado.gen.coroutine
@@ -107,8 +123,10 @@ def main():
 
     application = tornado.web.Application([(r"/", Root),
                                            (r"/pymongo", PyMongo),
+                                           (r"/pymongo_one", PyMongoOne),
                                            (r"/motor", Motor),
                                            (r"/motor2", Motor2),
+                                           (r"/motor_one", MotorOne),
                                            (r"/rand3", Random3),
                                            (r"/rand4", Random4),
                                            (r"/rand5", Random5)
