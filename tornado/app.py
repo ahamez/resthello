@@ -1,15 +1,16 @@
 #! /usr/bin/env python3
 
+import random
+
 import motor
 import pymongo
-import random
-import time
 import tornado.ioloop
 import tornado.web
 import tornado.options
 import tornado.gen
-
+import tornado.httpclient
 from tornado.options import define, options
+
 
 define("port", default=8080, help="run on the given port", type=int)
 define("debug", default=False, help="debug mode", type=bool)
@@ -105,6 +106,15 @@ class Random5(tornado.web.RequestHandler):
         self.finish()
 
 
+class Web(tornado.web.RequestHandler):
+    @tornado.gen.coroutine
+    def get(self):
+        http_client = tornado.httpclient.AsyncHTTPClient()
+        page = yield http_client.fetch('http://httpbin.org/html')
+        self.write(page.body)
+        self.finish()
+
+
 class Root(tornado.web.RequestHandler):
     def get(self):
         self.write('Hello world')
@@ -129,7 +139,8 @@ def main():
                                            (r"/motor_one", MotorOne),
                                            (r"/rand3", Random3),
                                            (r"/rand4", Random4),
-                                           (r"/rand5", Random5)
+                                           (r"/rand5", Random5),
+                                           (r"/web", Web)
                                            ], motor_db=motor_db, pymongo_db=pymongo_db, debug=options.debug
                                           )
 
